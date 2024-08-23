@@ -2,7 +2,7 @@ package lissa.trading.tinkoff_stock_service.service.account;
 
 import lissa.trading.tinkoff_stock_service.dto.account.AccountInfoDto;
 import lissa.trading.tinkoff_stock_service.dto.account.BalanceDto;
-import lissa.trading.tinkoff_stock_service.dto.account.FavoutiteStocksDto;
+import lissa.trading.tinkoff_stock_service.dto.account.FavouriteStocksDto;
 import lissa.trading.tinkoff_stock_service.dto.account.MarginAttributesDto;
 import lissa.trading.tinkoff_stock_service.dto.account.SecurityPositionsDto;
 
@@ -13,7 +13,7 @@ public interface AccountService {
 
     MarginAttributesDto getMarginAttributes(String accountId);
 
-    FavoutiteStocksDto getFavouriteStocks();
+    FavouriteStocksDto getFavouriteStocks();
 
     SecurityPositionsDto getPositionsById(String accountId);
 }

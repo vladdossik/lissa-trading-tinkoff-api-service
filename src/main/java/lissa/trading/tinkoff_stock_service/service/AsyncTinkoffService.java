@@ -23,7 +23,6 @@ import java.util.concurrent.CompletionException;
 public class AsyncTinkoffService {
     private final InvestApi investApi;
 
-    @Async
     public CompletableFuture<Instrument> getInstrumentByTicker(String ticker) {
         log.info("Getting {} from Tinkoff", ticker);
         return investApi.getInstrumentsService()
@@ -37,7 +36,6 @@ public class AsyncTinkoffService {
                 });
     }
 
-    @Async
     public CompletableFuture<GetOrderBookResponse> getOrderBookByFigi(String figi) {
         log.info("Getting price {} from Tinkoff", figi);
         return investApi.getMarketDataService()
@@ -48,7 +46,6 @@ public class AsyncTinkoffService {
                 });
     }
 
-    @Async
     public CompletableFuture<List<FavoriteInstrument>> getFavoriteInstruments() {
         log.info("Getting favorite instruments from Tinkoff");
         return investApi.getInstrumentsService().getFavorites()
@@ -58,7 +55,6 @@ public class AsyncTinkoffService {
                 });
     }
 
-    @Async
     public CompletableFuture<List<SecurityPosition>> getPositionsById(String accountId) {
         log.info("Getting positions by accountDId {} from Tinkoff", accountId);
         return investApi.getOperationsService()

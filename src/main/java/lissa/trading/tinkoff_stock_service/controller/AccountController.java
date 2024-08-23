@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lissa.trading.tinkoff_stock_service.dto.account.AccountInfoDto;
-import lissa.trading.tinkoff_stock_service.dto.account.FavoutiteStocksDto;
+import lissa.trading.tinkoff_stock_service.dto.account.FavouriteStocksDto;
 import lissa.trading.tinkoff_stock_service.dto.account.MarginAttributesDto;
 import lissa.trading.tinkoff_stock_service.dto.account.BalanceDto;
 import lissa.trading.tinkoff_stock_service.dto.account.SecurityPositionsDto;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/investment")
+@RequestMapping("/api/tinkoff/user")
 @Tag(name = "Управление аккаунтом", description = "API для управления аккаунтом и портфелем")
 public class AccountController {
 
@@ -36,9 +36,9 @@ public class AccountController {
 
     @Operation(summary = "Получить избранные акции", description = "Возвращает список избранных акций пользователя.")
     @ApiResponse(description = "Избранные акции успешно получены",
-            content = @Content(schema = @Schema(implementation = FavoutiteStocksDto.class)))
+            content = @Content(schema = @Schema(implementation = FavouriteStocksDto.class)))
     @GetMapping("/favourites")
-    public FavoutiteStocksDto getFavouriteStocks() {
+    public FavouriteStocksDto getFavouriteStocks() {
         return tinkoffAccountService.getFavouriteStocks();
     }
 

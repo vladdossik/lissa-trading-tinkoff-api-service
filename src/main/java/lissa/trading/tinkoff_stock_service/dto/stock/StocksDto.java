@@ -9,5 +9,5 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class StocksDto {
-    List<Stock> stocks;
+    private List<Stock> stocks;
 }

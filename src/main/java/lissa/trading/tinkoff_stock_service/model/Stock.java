@@ -1,15 +1,15 @@
 package lissa.trading.tinkoff_stock_service.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 @AllArgsConstructor
 public class Stock {
-    String ticker;
-    String figi;
-    String name;
-    String type;
-    Currency currency;
-    String source;
+    private String ticker;
+    private String figi;
+    private String name;
+    private String type;
+    private Currency currency;
+    private String source;
 }

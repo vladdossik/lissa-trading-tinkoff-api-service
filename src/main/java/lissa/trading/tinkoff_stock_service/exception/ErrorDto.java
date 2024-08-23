@@ -1,10 +1,10 @@
 package lissa.trading.tinkoff_stock_service.exception;
 
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 @AllArgsConstructor
 public class ErrorDto {
-    String error;
+    private String error;
 }

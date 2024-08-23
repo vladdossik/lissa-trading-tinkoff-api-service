@@ -1,19 +1,24 @@
 package lissa.trading.tinkoff_stock_service.service.account;
 
 import lissa.trading.tinkoff_stock_service.dto.account.AccountInfoDto;
-import lissa.trading.tinkoff_stock_service.dto.account.FavoutiteStocksDto;
+import lissa.trading.tinkoff_stock_service.dto.account.FavouriteStocksDto;
 import lissa.trading.tinkoff_stock_service.dto.account.MarginAttributesDto;
 import lissa.trading.tinkoff_stock_service.dto.account.BalanceDto;
 import lissa.trading.tinkoff_stock_service.dto.account.SecurityPositionsDto;
+import lissa.trading.tinkoff_stock_service.dto.account.UserInfoDto;
 import lissa.trading.tinkoff_stock_service.exception.AccountInfoException;
 import lissa.trading.tinkoff_stock_service.exception.BalanceRetrievalException;
 import lissa.trading.tinkoff_stock_service.exception.MarginAttributesRetrievalException;
 import lissa.trading.tinkoff_stock_service.exception.SecuritiesNotFoundException;
 import lissa.trading.tinkoff_stock_service.exception.StockRetrievalException;
 import lissa.trading.tinkoff_stock_service.dto.account.SecurityPosition;
+import lissa.trading.tinkoff_stock_service.exception.UnauthorizedException;
 import lissa.trading.tinkoff_stock_service.model.UserAccount;
 import lissa.trading.tinkoff_stock_service.service.AsyncTinkoffService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.GetInfoResponse;
 import ru.tinkoff.piapi.contract.v1.GetMarginAttributesResponse;
@@ -94,7 +99,7 @@ public class TinkoffAccountService implements AccountService {
     }
 
     @Override
-    public FavoutiteStocksDto getFavouriteStocks() {
+    public FavouriteStocksDto getFavouriteStocks() {
         try {
             List<CompletableFuture<String>> favoriteStockFutures = asyncTinkoffService.getFavoriteInstruments().get().stream()
                     .map(instrument -> CompletableFuture.completedFuture(instrument.getTicker()))
@@ -110,7 +115,7 @@ public class TinkoffAccountService implements AccountService {
                             .toList()
             ).join();
 
-            return new FavoutiteStocksDto(tickers);
+            return new FavouriteStocksDto(tickers);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("Thread was interrupted while retrieving favourite stocks.", e);

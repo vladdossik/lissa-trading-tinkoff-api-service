@@ -2,13 +2,13 @@ package lissa.trading.tinkoff_stock_service.model;
 
 import com.google.protobuf.ProtocolStringList;
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 @AllArgsConstructor
 public class UserAccount {
-    String accountId;
-    String tariff;
-    boolean premStatus;
-    ProtocolStringList qualifiers;
+    private String accountId;
+    private String tariff;
+    private boolean premStatus;
+    private ProtocolStringList qualifiers;
 }

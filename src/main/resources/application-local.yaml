@@ -3,7 +3,15 @@ server:
 
 api :
   isSandBoxMode : true
+  tinkoff-token: "token"
 
 logging:
   level:
     root: INFO
+
+encryption:
+  secret-key: "tDfV5xlY9Fv5eH7orlcQRQhaQDevNIKHKj8I+WFqor0="
+
+auth:
+  service:
+    url: http://localhost:8081

@@ -2,12 +2,12 @@ package lissa.trading.tinkoff_stock_service.dto.account;
 
 import lissa.trading.tinkoff_stock_service.model.UserAccount;
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Data;
 
 import java.util.List;
 
-@Value
+@Data
 @AllArgsConstructor
 public class AccountInfoDto {
-    List<UserAccount> userAccounts;
+    private List<UserAccount> userAccounts;
 }

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/stocks")
+@RequestMapping("/api/tinkoff/stocks")
 @Tag(name = "Управление акциями", description = "API для получения информации о акциях")
 public class StockController {
     private final StockService stockService;

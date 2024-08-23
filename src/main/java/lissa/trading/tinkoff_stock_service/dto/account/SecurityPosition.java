@@ -1,12 +1,12 @@
 package lissa.trading.tinkoff_stock_service.dto.account;
 
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 @AllArgsConstructor
 public class SecurityPosition {
-    String figi;
-    long blocked;
-    long balance;
+    private String figi;
+    private long blocked;
+    private long balance;
 }

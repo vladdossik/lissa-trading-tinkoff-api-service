@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class FavoutiteStocksDto {
+public class FavouriteStocksDto {
     List<String> favouriteStocksByTicker;
 }
