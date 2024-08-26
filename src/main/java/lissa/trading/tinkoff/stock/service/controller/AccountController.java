@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/api/tinkoff/user")
+@RequestMapping("/v1/api/tinkoff/user")
 @Tag(name = "Управление аккаунтом", description = "API для управления аккаунтом и портфелем")
 public class AccountController {
 
