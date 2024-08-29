@@ -1,0 +1,18 @@
+server:
+  port: ${SERVER_PORT}
+
+api :
+  isSandBoxMode : true
+  tinkoff-token: "token"
+
+logging:
+  level:
+    root: INFO
+
+integration:
+  rest:
+    auth-service-url: ${AUTH_SERVICE_URL}
+    user-service-url: ${USER_SERVICE_URL}
+    tinkoff-api-service-url: ${TINKOFF_API_SERVICE_URL}
+
+  rabbit:
