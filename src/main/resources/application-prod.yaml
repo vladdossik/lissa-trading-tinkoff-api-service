@@ -2,8 +2,8 @@ server:
   port: ${SERVER_PORT}
 
 api :
-  isSandBoxMode : true
-  tinkoff-token: "token"
+  isSandBoxMode : ${IS_SANDBOX_MODE}
+  tinkoff-token: ${TINKOFF_TOKEN}
 
 logging:
   level:
