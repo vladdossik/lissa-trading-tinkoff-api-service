@@ -31,15 +31,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/internal")
 @Tag(name = "Управление аккаунтом", description = "API для управления аккаунтом и портфелем")
-@Slf4j
 public class InternalController {
     private final AuthTokenFilter authTokenFilter;
     private final AccountService tinkoffAccountService;
     private final StockService stockService;
 
+    @Operation(summary = "Установить токен Тинькофф", description = "Сохраняет токен Тинькофф для авторизации.")
+    @ApiResponse(description = "Токен Тинькофф успешно установлен")
     @PostMapping("/set-token")
     public void setTinkoffToken(@RequestBody String tinkoffToken) {
-        log.info("Set new token: {}", tinkoffToken);
         authTokenFilter.updateTinkoffToken(tinkoffToken);
     }
 
