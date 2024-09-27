@@ -9,6 +9,10 @@ logging:
   level:
     root: INFO
 
+security:
+  internal:
+    token: Iq6Vu8Nz7Xa3Rl9Cm5YbTc2WpDf4Oj5ZfGn1Kh3
+
 integration:
   rest:
     auth-service-url: http://localhost:8081

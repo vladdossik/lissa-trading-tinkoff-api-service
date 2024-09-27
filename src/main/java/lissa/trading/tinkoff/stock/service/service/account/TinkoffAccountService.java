@@ -48,8 +48,7 @@ public class TinkoffAccountService implements AccountService {
                     .map(account -> new UserAccount(
                             account.getId(),
                             info.getTariff(),
-                            info.getPremStatus(),
-                            info.getQualifiedForWorkWithList()
+                            info.getPremStatus()
                     ))
                     .toList();
             return new AccountInfoDto(accounts);
