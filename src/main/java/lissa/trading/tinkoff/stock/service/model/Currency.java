@@ -10,7 +10,7 @@ import java.util.Arrays;
 public enum Currency {
     RUB, USD, EUR, GBP, HKD, CHF, JPY, CNY, TRY;
 
-    public static Currency fromString(String currency) {
+    public static Currency getFromString(String currency) {
         return Arrays.stream(values())
                 .filter(c -> c.name().equalsIgnoreCase(currency))
                 .findFirst()

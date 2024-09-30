@@ -34,7 +34,7 @@ public class TinkoffStockService implements StockService {
                     instrument.getFigi(),
                     instrument.getName(),
                     instrument.getInstrumentType(),
-                    Currency.fromString(instrument.getCurrency()),
+                    Currency.getFromString(instrument.getCurrency()),
                     "TINKOFF"
             );
         } catch (InterruptedException e) {
@@ -56,7 +56,7 @@ public class TinkoffStockService implements StockService {
                         instrument.getFigi(),
                         instrument.getName(),
                         instrument.getInstrumentType(),
-                        Currency.fromString(instrument.getCurrency()),
+                        Currency.getFromString(instrument.getCurrency()),
                         "TINKOFF"
                 )))
                 .toList();
