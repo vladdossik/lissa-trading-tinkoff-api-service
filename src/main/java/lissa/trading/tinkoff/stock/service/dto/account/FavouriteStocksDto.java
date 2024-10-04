@@ -8,5 +8,5 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class FavouriteStocksDto {
-    List<String> favouriteStocks;
+    private List<String> favouriteStocks;
 }
