@@ -1,6 +1,6 @@
 package lissa.trading.tinkoff.stock.service.security.jwt;
 
-import jakarta.servlet.http.HttpServletRequest;
+import lissa.trading.lissa.auth.lib.dto.UpdateTinkoffTokenResponce;
 import lissa.trading.lissa.auth.lib.dto.UserInfoDto;
 import lissa.trading.lissa.auth.lib.feign.AuthServiceClient;
 import lissa.trading.lissa.auth.lib.security.BaseAuthTokenFilter;
@@ -47,12 +47,14 @@ public class AuthTokenFilter extends BaseAuthTokenFilter<UserInfoDto> {
     }
 
     @Override
-    public void updateTinkoffToken(String tinkoffToken) {
+    public UpdateTinkoffTokenResponce updateTinkoffToken(String tinkoffToken) {
         try {
             tokenUpdateService.updateToken(tinkoffToken);
             log.debug("Successfully updated Tinkoff token.");
+            return new UpdateTinkoffTokenResponce("Successfully updated Tinkoff token.");
         } catch (Exception ex) {
             log.error("Failed to update Tinkoff token: {}", ex.getMessage());
+            return new UpdateTinkoffTokenResponce("Tinkoff token was not updated.");
         }
     }
 }

@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lissa.trading.lissa.auth.lib.dto.UpdateTinkoffTokenResponce;
 import lissa.trading.tinkoff.stock.service.dto.account.AccountInfoDto;
 import lissa.trading.tinkoff.stock.service.dto.account.BalanceDto;
 import lissa.trading.tinkoff.stock.service.dto.account.FavouriteStocksDto;
 import lissa.trading.tinkoff.stock.service.dto.account.MarginAttributesDto;
 import lissa.trading.tinkoff.stock.service.dto.account.SecurityPositionsDto;
+import lissa.trading.tinkoff.stock.service.dto.account.TinkoffTokenDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.FigiesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.StocksDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.StocksPricesDto;
@@ -38,8 +40,8 @@ public class InternalController {
     @Operation(summary = "Установить токен Тинькофф", description = "Сохраняет токен Тинькофф для авторизации.")
     @ApiResponse(description = "Токен Тинькофф успешно установлен")
     @PostMapping("/set-token")
-    public void setTinkoffToken(@RequestBody String tinkoffToken) {
-        authTokenFilter.updateTinkoffToken(tinkoffToken);
+    public UpdateTinkoffTokenResponce setTinkoffToken(@RequestBody TinkoffTokenDto tinkoffToken) {
+        return authTokenFilter.updateTinkoffToken(tinkoffToken.getToken());
     }
 
     @Operation(summary = "Получить информацию об акции", description = "Возвращает информацию об акции по тикеру.")
