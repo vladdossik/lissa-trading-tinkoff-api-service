@@ -48,6 +48,7 @@ public class AuthTokenFilter extends BaseAuthTokenFilter<UserInfoDto> {
 
     @Override
     public UpdateTinkoffTokenResponce updateTinkoffToken(String tinkoffToken) {
+        log.debug("Updating Tinkoff token...");
         try {
             tokenUpdateService.updateToken(tinkoffToken);
             log.debug("Successfully updated Tinkoff token.");
