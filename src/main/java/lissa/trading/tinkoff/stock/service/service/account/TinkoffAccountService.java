@@ -1,16 +1,16 @@
 package lissa.trading.tinkoff.stock.service.service.account;
 
 import lissa.trading.tinkoff.stock.service.dto.account.AccountInfoDto;
+import lissa.trading.tinkoff.stock.service.dto.account.BalanceDto;
 import lissa.trading.tinkoff.stock.service.dto.account.FavouriteStocksDto;
 import lissa.trading.tinkoff.stock.service.dto.account.MarginAttributesDto;
-import lissa.trading.tinkoff.stock.service.dto.account.BalanceDto;
+import lissa.trading.tinkoff.stock.service.dto.account.SecurityPositionDto;
 import lissa.trading.tinkoff.stock.service.dto.account.SecurityPositionsDto;
 import lissa.trading.tinkoff.stock.service.exception.AccountInfoException;
 import lissa.trading.tinkoff.stock.service.exception.BalanceRetrievalException;
 import lissa.trading.tinkoff.stock.service.exception.MarginAttributesRetrievalException;
 import lissa.trading.tinkoff.stock.service.exception.SecuritiesNotFoundException;
 import lissa.trading.tinkoff.stock.service.exception.StockRetrievalException;
-import lissa.trading.tinkoff.stock.service.dto.account.SecurityPosition;
 import lissa.trading.tinkoff.stock.service.model.UserAccount;
 import lissa.trading.tinkoff.stock.service.service.AsyncTinkoffService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,6 @@ public class TinkoffAccountService implements AccountService {
     private final UsersService usersService;
     private final OperationsService operationsService;
     private final AsyncTinkoffService asyncTinkoffService;
-
 
     public TinkoffAccountService(InvestApi investApi, AsyncTinkoffService asyncTinkoffService) {
         this.usersService = investApi.getUserService();
@@ -123,8 +122,8 @@ public class TinkoffAccountService implements AccountService {
     @Override
     public SecurityPositionsDto getPositionsById(String accountId) {
         try {
-            List<CompletableFuture<SecurityPosition>> positionFutures = asyncTinkoffService.getPositionsById(accountId).get().stream()
-                    .map(position -> CompletableFuture.completedFuture(new SecurityPosition(
+            List<CompletableFuture<SecurityPositionDto>> positionFutures = asyncTinkoffService.getPositionsById(accountId).get().stream()
+                    .map(position -> CompletableFuture.completedFuture(new SecurityPositionDto(
                             position.getFigi(),
                             position.getBlocked(),
                             position.getBalance()
@@ -135,7 +134,7 @@ public class TinkoffAccountService implements AccountService {
                     positionFutures.toArray(new CompletableFuture[0])
             );
 
-            List<SecurityPosition> positions = allFutures.thenApply(v ->
+            List<SecurityPositionDto> positions = allFutures.thenApply(v ->
                     positionFutures.stream()
                             .map(CompletableFuture::join)
                             .toList()

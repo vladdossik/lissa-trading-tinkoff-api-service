@@ -1,6 +1,5 @@
 package lissa.trading.tinkoff.stock.service.service.stock;
 
-import lissa.trading.tinkoff.stock.service.service.AsyncTinkoffService;
 import lissa.trading.tinkoff.stock.service.dto.stock.FigiesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.StockPrice;
 import lissa.trading.tinkoff.stock.service.dto.stock.StocksDto;
@@ -9,12 +8,14 @@ import lissa.trading.tinkoff.stock.service.dto.stock.TickersDto;
 import lissa.trading.tinkoff.stock.service.exception.StockNotFoundException;
 import lissa.trading.tinkoff.stock.service.model.Currency;
 import lissa.trading.tinkoff.stock.service.model.Stock;
+import lissa.trading.tinkoff.stock.service.service.AsyncTinkoffService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -26,17 +27,9 @@ public class TinkoffStockService implements StockService {
 
     @Override
     public Stock getStockByTicker(String ticker) {
+        Optional<Instrument> optionalInstrument;
         try {
-            Instrument instrument = asyncTinkoffService.getInstrumentByTicker(ticker).get();
-
-            return new Stock(
-                    instrument.getTicker(),
-                    instrument.getFigi(),
-                    instrument.getName(),
-                    instrument.getInstrumentType(),
-                    Currency.getFromString(instrument.getCurrency()),
-                    "TINKOFF"
-            );
+            optionalInstrument = asyncTinkoffService.getInstrumentByTicker(ticker).get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("Thread was interrupted while retrieving stock information for {}.", ticker, e);
@@ -45,20 +38,29 @@ public class TinkoffStockService implements StockService {
             log.error("Failed to retrieve stock information for {}.", ticker, e);
             throw new StockNotFoundException("Failed to retrieve stock information.", e);
         }
+
+        return optionalInstrument.map(instrument -> new Stock(
+                instrument.getTicker(),
+                instrument.getFigi(),
+                instrument.getName(),
+                instrument.getInstrumentType(),
+                Currency.getFromString(instrument.getCurrency()),
+                "TINKOFF"
+        )).orElseThrow(() -> new StockNotFoundException("Stock not found for ticker: " + ticker));
     }
 
     @Override
     public StocksDto getStocksByTickers(TickersDto tickers) {
-        List<CompletableFuture<Stock>> stockFutures = tickers.getTickers().stream()
-                .map(asyncTinkoffService::getInstrumentByTicker)
-                .map(future -> future.thenApply(instrument -> new Stock(
-                        instrument.getTicker(),
-                        instrument.getFigi(),
-                        instrument.getName(),
-                        instrument.getInstrumentType(),
-                        Currency.getFromString(instrument.getCurrency()),
-                        "TINKOFF"
-                )))
+        List<CompletableFuture<Optional<Stock>>> stockFutures = tickers.getTickers().stream()
+                .map(ticker -> asyncTinkoffService.getInstrumentByTicker(ticker)
+                        .thenApply(optionalInstrument -> optionalInstrument.map(instrument -> new Stock(
+                                instrument.getTicker(),
+                                instrument.getFigi(),
+                                instrument.getName(),
+                                instrument.getInstrumentType(),
+                                Currency.getFromString(instrument.getCurrency()),
+                                "TINKOFF"
+                        ))))
                 .toList();
 
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(
@@ -68,6 +70,8 @@ public class TinkoffStockService implements StockService {
         List<Stock> stocks = allFutures.thenApply(v ->
                 stockFutures.stream()
                         .map(CompletableFuture::join)
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
                         .toList()
         ).join();
 
@@ -76,12 +80,14 @@ public class TinkoffStockService implements StockService {
 
     @Override
     public StocksPricesDto getPricesStocksByFigies(FigiesDto figiesDto) {
-        List<CompletableFuture<StockPrice>> priceFutures = figiesDto.getFigies().stream()
-                .map(asyncTinkoffService::getOrderBookByFigi)
-                .map(future -> future.thenApply(orderBook -> new StockPrice(
-                        orderBook.getFigi(),
-                        orderBook.getLastPrice().getUnits() +
-                                orderBook.getLastPrice().getNano() / 1_000_000_000.0)))
+        List<CompletableFuture<Optional<StockPrice>>> priceFutures = figiesDto.getFigies().stream()
+                .map(figi -> asyncTinkoffService.getOrderBookByFigi(figi)
+                        .thenApply(optionalOrderBook -> optionalOrderBook.map(orderBook -> new StockPrice(
+                                orderBook.getFigi(),
+                                orderBook.getLastPrice().getUnits() +
+                                        orderBook.getLastPrice().getNano() / 1_000_000_000.0
+                        )))
+                )
                 .toList();
 
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(
@@ -91,6 +97,8 @@ public class TinkoffStockService implements StockService {
         List<StockPrice> prices = allFutures.thenApply(v ->
                 priceFutures.stream()
                         .map(CompletableFuture::join)
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
                         .toList()
         ).join();
 
