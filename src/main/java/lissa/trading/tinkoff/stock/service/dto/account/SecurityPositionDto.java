@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SecurityPosition {
+public class SecurityPositionDto {
     private String figi;
     private long blocked;
     private long balance;
