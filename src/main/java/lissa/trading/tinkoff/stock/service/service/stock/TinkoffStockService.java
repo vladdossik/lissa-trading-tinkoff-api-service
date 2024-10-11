@@ -23,6 +23,9 @@ import java.util.concurrent.ExecutionException;
 @Service
 @RequiredArgsConstructor
 public class TinkoffStockService implements StockService {
+    private static final String SOURCE_NAME = "TINKOFF";
+    private static final double NANO_DIVISOR = 1_000_000_000.0;
+
     private final AsyncTinkoffService asyncTinkoffService;
 
     @Override
@@ -45,7 +48,7 @@ public class TinkoffStockService implements StockService {
                 instrument.getName(),
                 instrument.getInstrumentType(),
                 Currency.getFromString(instrument.getCurrency()),
-                "TINKOFF"
+                SOURCE_NAME
         )).orElseThrow(() -> new StockNotFoundException("Stock not found for ticker: " + ticker));
     }
 
@@ -59,7 +62,7 @@ public class TinkoffStockService implements StockService {
                                 instrument.getName(),
                                 instrument.getInstrumentType(),
                                 Currency.getFromString(instrument.getCurrency()),
-                                "TINKOFF"
+                                SOURCE_NAME
                         ))))
                 .toList();
 
@@ -85,7 +88,7 @@ public class TinkoffStockService implements StockService {
                         .thenApply(optionalOrderBook -> optionalOrderBook.map(orderBook -> new StockPrice(
                                 orderBook.getFigi(),
                                 orderBook.getLastPrice().getUnits() +
-                                        orderBook.getLastPrice().getNano() / 1_000_000_000.0
+                                        orderBook.getLastPrice().getNano() / NANO_DIVISOR
                         )))
                 )
                 .toList();
