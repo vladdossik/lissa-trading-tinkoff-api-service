@@ -12,10 +12,12 @@ import lissa.trading.tinkoff.stock.service.dto.account.FavouriteStocksDto;
 import lissa.trading.tinkoff.stock.service.dto.account.MarginAttributesDto;
 import lissa.trading.tinkoff.stock.service.dto.account.SecurityPositionsDto;
 import lissa.trading.tinkoff.stock.service.dto.account.TinkoffTokenDto;
+import lissa.trading.tinkoff.stock.service.dto.stock.CandlesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.FigiesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.StocksDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.StocksPricesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.TickersDto;
+import lissa.trading.tinkoff.stock.service.dto.stock.TinkoffCandlesRequestDto;
 import lissa.trading.tinkoff.stock.service.model.Stock;
 import lissa.trading.tinkoff.stock.service.security.jwt.AuthTokenFilter;
 import lissa.trading.tinkoff.stock.service.service.account.AccountService;
@@ -107,4 +109,14 @@ public class InternalController {
     public SecurityPositionsDto getPositionsById(@PathVariable String accountId) {
         return tinkoffAccountService.getPositionsById(accountId);
     }
+
+    @Operation(summary = "Получить исторические данные об инструменте", description = "Возвращает свечи за выбранный " +
+            "период времени" )
+    @ApiResponse(description = "Цены акций успешно получены",
+            content = @Content(schema = @Schema(implementation = CandlesDto.class)))
+    @PostMapping("/candles")
+    public CandlesDto getCandles(@RequestBody TinkoffCandlesRequestDto candlesRequestDto) {
+        return stockService.getCandles(candlesRequestDto);
+    }
+
 }

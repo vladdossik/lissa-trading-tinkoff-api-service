@@ -1,23 +1,31 @@
 package lissa.trading.tinkoff.stock.service.service.stock;
 
+import lissa.trading.tinkoff.stock.service.dto.stock.CandlesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.FigiesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.StockPrice;
 import lissa.trading.tinkoff.stock.service.dto.stock.StocksDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.StocksPricesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.TickersDto;
+import lissa.trading.tinkoff.stock.service.dto.stock.TinkoffCandlesRequestDto;
 import lissa.trading.tinkoff.stock.service.exception.StockNotFoundException;
+import lissa.trading.tinkoff.stock.service.model.Candle;
 import lissa.trading.tinkoff.stock.service.model.Currency;
 import lissa.trading.tinkoff.stock.service.model.Stock;
 import lissa.trading.tinkoff.stock.service.service.AsyncTinkoffService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -82,13 +90,32 @@ public class TinkoffStockService implements StockService {
     }
 
     @Override
+    public CandlesDto getCandles(TinkoffCandlesRequestDto candlesRequestDto) {
+        log.info("Requesting candles with params: {}", candlesRequestDto);
+
+        CompletableFuture<List<HistoricCandle>> candlesFuture = asyncTinkoffService.getCandles(candlesRequestDto);
+
+        List<Candle> candles = candlesFuture.thenApply(historicCandles -> historicCandles.stream()
+                .map(historicCandle -> new Candle(historicCandle.getVolume(),
+                        calculateStockPrice(historicCandle.getOpen().getNano(), historicCandle.getOpen().getUnits()),
+                        calculateStockPrice(historicCandle.getClose().getNano(), historicCandle.getClose().getUnits()),
+                        calculateStockPrice(historicCandle.getHigh().getNano(), historicCandle.getHigh().getUnits()),
+                        calculateStockPrice(historicCandle.getLow().getNano(), historicCandle.getLow().getUnits()),
+                        OffsetDateTime.ofInstant(Instant.ofEpochSecond(historicCandle.getTime().getSeconds(),
+                                historicCandle.getTime().getNanos()), ZoneOffset.UTC), historicCandle.getIsComplete()))
+                .collect(Collectors.toList()))
+                .join();
+
+        return new CandlesDto(candles);
+    }
+
+    @Override
     public StocksPricesDto getPricesStocksByFigies(FigiesDto figiesDto) {
         List<CompletableFuture<Optional<StockPrice>>> priceFutures = figiesDto.getFigies().stream()
                 .map(figi -> asyncTinkoffService.getOrderBookByFigi(figi)
                         .thenApply(optionalOrderBook -> optionalOrderBook.map(orderBook -> new StockPrice(
                                 orderBook.getFigi(),
-                                orderBook.getLastPrice().getUnits() +
-                                        orderBook.getLastPrice().getNano() / NANO_DIVISOR
+                                calculateStockPrice(orderBook.getLastPrice().getNano(), orderBook.getLastPrice().getNano())
                         )))
                 )
                 .toList();
@@ -106,5 +133,9 @@ public class TinkoffStockService implements StockService {
         ).join();
 
         return new StocksPricesDto(prices);
+    }
+
+    private Double calculateStockPrice(int nano, long units){
+        return units + nano / NANO_DIVISOR;
     }
 }
