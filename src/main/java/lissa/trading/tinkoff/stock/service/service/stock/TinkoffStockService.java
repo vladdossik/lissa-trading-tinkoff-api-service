@@ -96,13 +96,7 @@ public class TinkoffStockService implements StockService {
         CompletableFuture<List<HistoricCandle>> candlesFuture = asyncTinkoffService.getCandles(candlesRequestDto);
 
         List<Candle> candles = candlesFuture.thenApply(historicCandles -> historicCandles.stream()
-                .map(historicCandle -> new Candle(historicCandle.getVolume(),
-                        calculateStockPrice(historicCandle.getOpen().getNano(), historicCandle.getOpen().getUnits()),
-                        calculateStockPrice(historicCandle.getClose().getNano(), historicCandle.getClose().getUnits()),
-                        calculateStockPrice(historicCandle.getHigh().getNano(), historicCandle.getHigh().getUnits()),
-                        calculateStockPrice(historicCandle.getLow().getNano(), historicCandle.getLow().getUnits()),
-                        OffsetDateTime.ofInstant(Instant.ofEpochSecond(historicCandle.getTime().getSeconds(),
-                                historicCandle.getTime().getNanos()), ZoneOffset.UTC), historicCandle.getIsComplete()))
+                .map(this::mapToCandle)
                 .collect(Collectors.toList()))
                 .join();
 
@@ -138,4 +132,24 @@ public class TinkoffStockService implements StockService {
     private Double calculateStockPrice(int nano, long units){
         return units + nano / NANO_DIVISOR;
     }
+
+
+    private Candle mapToCandle(HistoricCandle historicCandle) {
+        return new Candle(
+                historicCandle.getVolume(),
+                calculateStockPrice(historicCandle.getOpen().getNano(), historicCandle.getOpen().getUnits()),
+                calculateStockPrice(historicCandle.getClose().getNano(), historicCandle.getClose().getUnits()),
+                calculateStockPrice(historicCandle.getHigh().getNano(), historicCandle.getHigh().getUnits()),
+                calculateStockPrice(historicCandle.getLow().getNano(), historicCandle.getLow().getUnits()),
+                OffsetDateTime.ofInstant(
+                        Instant.ofEpochSecond(
+                                historicCandle.getTime().getSeconds(),
+                                historicCandle.getTime().getNanos()
+                        ),
+                        ZoneOffset.UTC
+                ),
+                historicCandle.getIsComplete()
+        );
+    }
+
 }

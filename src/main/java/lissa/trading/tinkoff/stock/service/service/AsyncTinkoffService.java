@@ -106,8 +106,8 @@ public class AsyncTinkoffService {
                 .exceptionally(ex -> {
                     log.error("Failed to get historical candles from T-Bank by data: {}: {}", tinkoffCandlesRequestDto,
                             ex.getMessage());
-                    throw new CompletionException(new CandlesNotFoundException("Failed to retrive historical candies " +
-                            "from T-Bank: " + ex.getMessage()));
+                    throw new CompletionException(new CandlesNotFoundException(
+                            "Failed to retrieve historical candies from T-Bank: " + ex.getMessage()));
                 });
     }
 
