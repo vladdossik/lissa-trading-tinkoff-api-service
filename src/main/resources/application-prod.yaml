@@ -9,6 +9,10 @@ logging:
   level:
     root: INFO
 
+security:
+  internal:
+    token: ${SECURITY_INTERNAL_TOKEN}
+
 integration:
   rest:
     auth-service-url: ${AUTH_SERVICE_URL}
