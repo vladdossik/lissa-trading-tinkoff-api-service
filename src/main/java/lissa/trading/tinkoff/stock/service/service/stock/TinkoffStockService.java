@@ -97,8 +97,8 @@ public class TinkoffStockService implements StockService {
 
         List<Candle> candles = candlesFuture.thenApply(historicCandles -> historicCandles.stream()
                 .map(this::mapToCandle)
-                .collect(Collectors.toList()))
-                .join();
+                .toList()
+                ).join();
 
         return new CandlesDto(candles);
     }
