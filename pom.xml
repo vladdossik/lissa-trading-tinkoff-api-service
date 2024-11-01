@@ -7,8 +7,8 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.2</version>
         <relativePath/> <!-- lookup parent from repository -->
-
     </parent>
+
     <groupId>lissa.trading</groupId>
     <artifactId>tinkoff-stock-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -19,6 +19,13 @@
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -88,9 +95,9 @@
             <artifactId>spring-cloud-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>lissa.trading</groupId>
-            <artifactId>auth-security-lib</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>com.github.vladdossik</groupId>
+            <artifactId>lissa-trading-auth-lib</artifactId>
+            <version>v0.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.jacoco</groupId>
