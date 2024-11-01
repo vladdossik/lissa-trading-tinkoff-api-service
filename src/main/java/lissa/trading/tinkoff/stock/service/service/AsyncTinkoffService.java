@@ -1,12 +1,17 @@
 package lissa.trading.tinkoff.stock.service.service;
 
+import lissa.trading.tinkoff.stock.service.dto.stock.TinkoffCandlesRequestDto;
+import lissa.trading.tinkoff.stock.service.exception.CandlesNotFoundException;
 import lissa.trading.tinkoff.stock.service.exception.RetrieveFailedException;
 import lissa.trading.tinkoff.stock.service.exception.SecuritiesNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.FavoriteInstrument;
+import ru.tinkoff.piapi.contract.v1.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.GetOrderBookResponse;
+import ru.tinkoff.piapi.contract.v1.GetTechAnalysisResponse;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.core.InvestApi;
 import ru.tinkoff.piapi.core.models.Positions;
@@ -82,5 +87,29 @@ public class AsyncTinkoffService {
                     throw new CompletionException(new SecuritiesNotFoundException("Failed to retrieve positions.", ex));
                 });
     }
+
+    public CompletableFuture<List<HistoricCandle>> getCandles(TinkoffCandlesRequestDto tinkoffCandlesRequestDto) {
+        log.info("Requesting historical candles from T-Bank");
+        return investApi.getMarketDataService()
+                .getCandles(tinkoffCandlesRequestDto.getInstrumentId(),
+                        tinkoffCandlesRequestDto.getFrom().toInstant(),
+                        tinkoffCandlesRequestDto.getTo().toInstant(),
+                        tinkoffCandlesRequestDto.getInterval()
+                )
+                .thenCompose(candles ->
+                    candles.isEmpty()
+                            ? CompletableFuture.failedFuture(
+                                    new CandlesNotFoundException("Failed to get historical candles from T-Bank"))
+                            : CompletableFuture.completedFuture(candles)
+
+                )
+                .exceptionally(ex -> {
+                    log.error("Failed to get historical candles from T-Bank by data: {}: {}", tinkoffCandlesRequestDto,
+                            ex.getMessage());
+                    throw new CompletionException(new CandlesNotFoundException(
+                            "Failed to retrieve historical candies from T-Bank: " + ex.getMessage()));
+                });
+    }
+
 }
 
