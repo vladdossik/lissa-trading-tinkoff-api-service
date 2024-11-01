@@ -8,11 +8,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.FavoriteInstrument;
+import ru.tinkoff.piapi.contract.v1.FindInstrumentResponse;
 import ru.tinkoff.piapi.contract.v1.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.GetOrderBookResponse;
 import ru.tinkoff.piapi.contract.v1.GetTechAnalysisResponse;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Instrument;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.core.InvestApi;
 import ru.tinkoff.piapi.core.models.Positions;
 import ru.tinkoff.piapi.core.models.SecurityPosition;
@@ -37,7 +39,10 @@ public class AsyncTinkoffService {
                 .thenCompose(instruments ->
                         instruments.isEmpty()
                                 ? CompletableFuture.completedFuture(Optional.<Instrument>empty())
-                                : investApi.getInstrumentsService().getInstrumentByFigi(instruments.get(0).getFigi())
+                                : investApi.getInstrumentsService().getInstrumentByFigi(instruments.stream()
+                                        .filter(instrumentShort -> instrumentShort.getInstrumentKind()
+                                                .equals(InstrumentType.INSTRUMENT_TYPE_SHARE))
+                                        .findFirst().get().getFigi())
                                 .thenApply(Optional::of)
                 )
                 .orTimeout(5, TimeUnit.SECONDS)

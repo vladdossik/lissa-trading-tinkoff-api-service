@@ -13,6 +13,7 @@ import lissa.trading.tinkoff.stock.service.dto.account.MarginAttributesDto;
 import lissa.trading.tinkoff.stock.service.dto.account.SecurityPositionsDto;
 import lissa.trading.tinkoff.stock.service.dto.account.TinkoffTokenDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.CandlesDto;
+import lissa.trading.tinkoff.stock.service.dto.stock.CompanyNamesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.FigiesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.StocksDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.StocksPricesDto;
@@ -28,7 +29,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -119,4 +123,12 @@ public class InternalController {
         return stockService.getCandles(candlesRequestDto);
     }
 
+    @Operation(summary = "Получить названия компаний", description = "Возвращает названия компаний по тикерам")
+    @ApiResponse(description = "Названия компаний успешно получены",
+                 content = @Content(schema = @Schema(implementation = CompanyNamesDto.class)),
+                 responseCode = "200")
+    @GetMapping("/companies")
+    public CompanyNamesDto getCompanyNamesByTickers(@RequestParam List<String> tickers) {
+        return stockService.getCompanyNamesByTickers(tickers);
+    }
 }
