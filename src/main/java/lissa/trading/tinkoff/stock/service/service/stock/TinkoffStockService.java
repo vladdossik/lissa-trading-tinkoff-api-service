@@ -1,6 +1,7 @@
 package lissa.trading.tinkoff.stock.service.service.stock;
 
 import lissa.trading.tinkoff.stock.service.dto.stock.CandlesDto;
+import lissa.trading.tinkoff.stock.service.dto.stock.CompanyNamesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.FigiesDto;
 import lissa.trading.tinkoff.stock.service.dto.stock.StockPrice;
 import lissa.trading.tinkoff.stock.service.dto.stock.StocksDto;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -128,6 +130,30 @@ public class TinkoffStockService implements StockService {
 
         return new StocksPricesDto(prices);
     }
+
+    @Override
+    public CompanyNamesDto getCompanyNamesByTickers(List<String> tickers) {
+        List<CompletableFuture<Optional<String>>> nameFutures = tickers.stream()
+                .map(asyncTinkoffService::getInstrumentByTicker)
+                .map(future -> future
+                        .exceptionally(ex -> Optional.empty())  // Обработка исключений
+                        .thenApply(optInstrument -> optInstrument.map(Instrument::getName))
+                )
+                .toList();
+
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(nameFutures.toArray(new CompletableFuture[0]));
+
+        List<String> companyNames = allOf.thenApply(v ->
+                nameFutures.stream()
+                        .map(CompletableFuture::join)
+                        .flatMap(Optional::stream)
+                        .toList()
+        ).join();
+
+        return new CompanyNamesDto(companyNames);
+    }
+
+
 
     private Double calculateStockPrice(int nano, long units){
         return units + nano / NANO_DIVISOR;
