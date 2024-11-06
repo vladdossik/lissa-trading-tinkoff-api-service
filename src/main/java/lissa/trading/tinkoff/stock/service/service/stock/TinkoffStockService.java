@@ -133,21 +133,26 @@ public class TinkoffStockService implements StockService {
 
     @Override
     public CompanyNamesDto getCompanyNamesByTickers(List<String> tickers) {
-        List<CompletableFuture<Optional<Instrument>>> futures = tickers.stream()
+        List<CompletableFuture<Optional<String>>> nameFutures = tickers.stream()
                 .map(asyncTinkoffService::getInstrumentByTicker)
+                .map(future -> future
+                        .exceptionally(ex -> Optional.empty())  // Обработка исключений
+                        .thenApply(optInstrument -> optInstrument.map(Instrument::getName))
+                )
                 .toList();
 
-        CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(nameFutures.toArray(new CompletableFuture[0]));
 
-        return allOf.thenApply(v -> {
-            List<String> companyNames = futures.stream()
-                    .map(CompletableFuture::join)
-                    .flatMap(optionalInstrument -> optionalInstrument.stream()
-                            .map(Instrument::getName))
-                    .toList();
-            return new CompanyNamesDto(companyNames);
-        }).join();
+        List<String> companyNames = allOf.thenApply(v ->
+                nameFutures.stream()
+                        .map(CompletableFuture::join)
+                        .flatMap(Optional::stream)
+                        .toList()
+        ).join();
+
+        return new CompanyNamesDto(companyNames);
     }
+
 
 
     private Double calculateStockPrice(int nano, long units){
