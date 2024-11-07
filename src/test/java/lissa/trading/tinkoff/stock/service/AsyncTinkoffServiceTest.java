@@ -1,16 +1,11 @@
 package lissa.trading.tinkoff.stock.service;
 
 import lissa.trading.tinkoff.stock.service.exception.SecuritiesNotFoundException;
-import lissa.trading.tinkoff.stock.service.service.AsyncTinkoffService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.tinkoff.piapi.contract.v1.FavoriteInstrument;
 import ru.tinkoff.piapi.contract.v1.GetOrderBookResponse;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.InstrumentShort;
-import ru.tinkoff.piapi.core.InstrumentsService;
-import ru.tinkoff.piapi.core.MarketDataService;
-import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.models.Positions;
 import ru.tinkoff.piapi.core.models.SecurityPosition;
 
@@ -29,27 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AsyncTinkoffServiceTest extends BaseTest {
-    private AsyncTinkoffService asyncTinkoffService;
-
-    private InstrumentsService instrumentsServiceMock;
-    private MarketDataService marketDataServiceMock;
-    private OperationsService operationsServiceMock;
-
-    @Override
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
-        instrumentsServiceMock = mock(InstrumentsService.class);
-        marketDataServiceMock = mock(MarketDataService.class);
-        operationsServiceMock = mock(OperationsService.class);
-
-        when(investApiMock.getInstrumentsService()).thenReturn(instrumentsServiceMock);
-        when(investApiMock.getMarketDataService()).thenReturn(marketDataServiceMock);
-        when(investApiMock.getOperationsService()).thenReturn(operationsServiceMock);
-
-        asyncTinkoffService = new AsyncTinkoffService(investApiMock);
-    }
+class AsyncTinkoffServiceTest extends BaseAsyncTest {
 
     @Test
     void testGetInstrumentByTicker_Success() throws Exception {
@@ -106,10 +81,12 @@ class AsyncTinkoffServiceTest extends BaseTest {
 
     @Test
     void testGetFavoriteInstruments_Success() throws Exception {
-        FavoriteInstrument favoriteInstrument1 = mock(FavoriteInstrument.class);
-        FavoriteInstrument favoriteInstrument2 = mock(FavoriteInstrument.class);
+        FavoriteInstrument instrumentMock1 = mock(FavoriteInstrument.class);
+        when(instrumentMock1.getTicker()).thenReturn("AAPL");
+        FavoriteInstrument instrumentMock2 = mock(FavoriteInstrument.class);
+        when(instrumentMock2.getTicker()).thenReturn("GOOGL");
 
-        when(instrumentsServiceMock.getFavorites()).thenReturn(CompletableFuture.completedFuture(List.of(favoriteInstrument1, favoriteInstrument2)));
+        when(instrumentsServiceMock.getFavorites()).thenReturn(CompletableFuture.completedFuture(List.of(instrumentMock1, instrumentMock2)));
 
         CompletableFuture<List<FavoriteInstrument>> futureResult = asyncTinkoffService.getFavoriteInstruments();
         List<FavoriteInstrument> result = futureResult.get();

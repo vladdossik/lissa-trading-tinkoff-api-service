@@ -14,6 +14,7 @@ import lissa.trading.tinkoff.stock.service.exception.StockRetrievalException;
 import lissa.trading.tinkoff.stock.service.model.UserAccount;
 import lissa.trading.tinkoff.stock.service.service.AsyncTinkoffService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.GetInfoResponse;
 import ru.tinkoff.piapi.contract.v1.GetMarginAttributesResponse;
@@ -26,21 +27,21 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-@Service
 @Slf4j
+@Service
 public class TinkoffAccountService implements AccountService {
-    private final UsersService usersService;
-    private final OperationsService operationsService;
+    private final ObjectProvider<InvestApi> investApiProvider;
     private final AsyncTinkoffService asyncTinkoffService;
 
-    public TinkoffAccountService(InvestApi investApi, AsyncTinkoffService asyncTinkoffService) {
-        this.usersService = investApi.getUserService();
-        this.operationsService = investApi.getOperationsService();
+    public TinkoffAccountService(ObjectProvider<InvestApi> investApiProvider, AsyncTinkoffService asyncTinkoffService) {
+        this.investApiProvider = investApiProvider;
         this.asyncTinkoffService = asyncTinkoffService;
     }
 
     @Override
     public AccountInfoDto getAccountsInfo() {
+        InvestApi investApi = investApiProvider.getObject();
+        UsersService usersService = investApi.getUserService();
         try {
             GetInfoResponse info = usersService.getInfoSync();
             List<UserAccount> accounts = usersService.getAccountsSync().stream()
@@ -59,6 +60,8 @@ public class TinkoffAccountService implements AccountService {
 
     @Override
     public BalanceDto getBalance(String accountId) {
+        InvestApi investApi = investApiProvider.getObject();
+        OperationsService operationsService = investApi.getOperationsService();
         try {
             Portfolio portfolio = operationsService.getPortfolioSync(accountId);
             return new BalanceDto(
@@ -74,6 +77,8 @@ public class TinkoffAccountService implements AccountService {
 
     @Override
     public MarginAttributesDto getMarginAttributes(String accountId) {
+        InvestApi investApi = investApiProvider.getObject();
+        UsersService usersService = investApi.getUserService();
         try {
             GetMarginAttributesResponse marginAttributes = usersService.getMarginAttributesSync(accountId);
             double liquidPortfolioValue = marginAttributes.getLiquidPortfolio().getUnits() +

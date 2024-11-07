@@ -16,7 +16,7 @@ public class ApplicationConfig {
     private final InvestApiFactory investApiFactory;
 
     @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public InvestApi investApi() {
         return investApiFactory.createInvestApi();
     }

@@ -6,6 +6,7 @@ import lissa.trading.tinkoff.stock.service.exception.RetrieveFailedException;
 import lissa.trading.tinkoff.stock.service.exception.SecuritiesNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.FavoriteInstrument;
 import ru.tinkoff.piapi.contract.v1.FindInstrumentResponse;
@@ -30,10 +31,11 @@ import java.util.concurrent.TimeoutException;
 @Service
 @RequiredArgsConstructor
 public class AsyncTinkoffService {
-    private final InvestApi investApi;
+    private final ObjectProvider<InvestApi> investApiProvider;
 
     public CompletableFuture<Optional<Instrument>> getInstrumentByTicker(String ticker) {
         log.info("Getting {} from Tinkoff", ticker);
+        InvestApi investApi = investApiProvider.getObject();
         return investApi.getInstrumentsService()
                 .findInstrument(ticker)
                 .thenCompose(instruments ->
@@ -58,6 +60,7 @@ public class AsyncTinkoffService {
 
     public CompletableFuture<Optional<GetOrderBookResponse>> getOrderBookByFigi(String figi) {
         log.info("Getting price for figi {} from Tinkoff", figi);
+        InvestApi investApi = investApiProvider.getObject();
         return investApi.getMarketDataService()
                 .getOrderBook(figi, 1)
                 .thenApply(Optional::of)
@@ -69,6 +72,7 @@ public class AsyncTinkoffService {
 
     public CompletableFuture<List<FavoriteInstrument>> getFavoriteInstruments() {
         log.info("Getting favorite instruments from Tinkoff");
+        InvestApi investApi = investApiProvider.getObject();
         return investApi.getInstrumentsService().getFavorites()
                 .exceptionally(ex -> {
                     log.error("Failed to get favorite instruments: {}", ex.getMessage());
@@ -78,6 +82,7 @@ public class AsyncTinkoffService {
 
     public CompletableFuture<List<SecurityPosition>> getPositionsById(String accountId) {
         log.info("Getting positions by accountId {} from Tinkoff", accountId);
+        InvestApi investApi = investApiProvider.getObject();
         return investApi.getOperationsService()
                 .getPositions(accountId)
                 .thenApply(Positions::getSecurities)
