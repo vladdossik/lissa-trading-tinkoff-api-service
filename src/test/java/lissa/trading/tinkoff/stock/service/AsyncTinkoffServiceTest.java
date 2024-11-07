@@ -8,6 +8,7 @@ import ru.tinkoff.piapi.contract.v1.FavoriteInstrument;
 import ru.tinkoff.piapi.contract.v1.GetOrderBookResponse;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.InstrumentShort;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
 import ru.tinkoff.piapi.core.OperationsService;
@@ -55,10 +56,13 @@ class AsyncTinkoffServiceTest extends BaseTest {
     void testGetInstrumentByTicker_Success() throws Exception {
         String ticker = "AAPL";
         String figi = "FIGI123";
+        InstrumentType instrumentType = InstrumentType.INSTRUMENT_TYPE_SHARE;
 
         InstrumentShort instrumentShortMock = mock(InstrumentShort.class);
         when(instrumentShortMock.getFigi()).thenReturn(figi);
         when(instrumentShortMock.getTicker()).thenReturn(ticker);
+        when(instrumentShortMock.getInstrumentKind()).thenReturn(instrumentType);
+
 
         when(instrumentsServiceMock.findInstrument(ticker)).thenReturn(CompletableFuture.completedFuture(List.of(instrumentShortMock)));
 
