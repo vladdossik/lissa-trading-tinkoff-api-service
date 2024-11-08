@@ -111,7 +111,8 @@ public class TinkoffStockService implements StockService {
                 .map(figi -> asyncTinkoffService.getOrderBookByFigi(figi)
                         .thenApply(optionalOrderBook -> optionalOrderBook.map(orderBook -> new StockPrice(
                                 orderBook.getFigi(),
-                                calculateStockPrice(orderBook.getLastPrice().getNano(), orderBook.getLastPrice().getNano())
+                                calculateStockPrice(orderBook.getLastPrice().getNano(),
+                                        orderBook.getLastPrice().getUnits())
                         )))
                 )
                 .toList();
