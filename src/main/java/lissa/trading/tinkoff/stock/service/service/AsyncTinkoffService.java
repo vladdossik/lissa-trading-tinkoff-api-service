@@ -9,10 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.FavoriteInstrument;
-import ru.tinkoff.piapi.contract.v1.FindInstrumentResponse;
-import ru.tinkoff.piapi.contract.v1.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.GetOrderBookResponse;
-import ru.tinkoff.piapi.contract.v1.GetTechAnalysisResponse;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
@@ -100,17 +97,17 @@ public class AsyncTinkoffService {
 
     public CompletableFuture<List<HistoricCandle>> getCandles(TinkoffCandlesRequestDto tinkoffCandlesRequestDto) {
         log.info("Requesting historical candles from T-Bank");
-        return investApi.getMarketDataService()
+        return investApiProvider.getObject().getMarketDataService()
                 .getCandles(tinkoffCandlesRequestDto.getInstrumentId(),
                         tinkoffCandlesRequestDto.getFrom().toInstant(),
                         tinkoffCandlesRequestDto.getTo().toInstant(),
                         tinkoffCandlesRequestDto.getInterval()
                 )
                 .thenCompose(candles ->
-                    candles.isEmpty()
-                            ? CompletableFuture.failedFuture(
-                                    new CandlesNotFoundException("Failed to get historical candles from T-Bank"))
-                            : CompletableFuture.completedFuture(candles)
+                        candles.isEmpty()
+                                ? CompletableFuture.failedFuture(
+                                new CandlesNotFoundException("Failed to get historical candles from T-Bank"))
+                                : CompletableFuture.completedFuture(candles)
 
                 )
                 .exceptionally(ex -> {
