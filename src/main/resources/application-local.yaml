@@ -1,8 +1,8 @@
 server:
   port: 8082
 
-api :
-  isSandBoxMode : true
+api:
+  isSandBoxMode: true
   tinkoff-token: "token"
 
 logging:
@@ -11,11 +11,15 @@ logging:
 
 security:
   internal:
-    token: Iq6Vu8Nz7Xa3Rl9Cm5YbTc2WpDf4Oj5ZfGn1Kh3
+    token: ZEdsdWEyOW1aa0Z3YVMxcGJuUmxjbTVoYkMxclpYaz0K
 
 integration:
   rest:
     auth-service-url: http://localhost:8081
-    user-service-url: http://localhost:8080
     tinkoff-api-service-url: http://localhost:8082
+    user-service:
+      url: http://localhost:8080
+      token: ZFhObGNsTmxjblpwWTJVdGFXNTBaWEp1WVd3dGEyVjU=
+    analytics-service:
+      token: WVc1aGJIbDBhV056TFdsdWRHVnlibUZzTFd0bGVRCg==
   rabbit:
