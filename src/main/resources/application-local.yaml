@@ -11,7 +11,7 @@ logging:
 
 security:
   internal:
-    token: dGlua29mZkFwaS1pbnRlcm5hbC1rZXk=
+    token: ZEdsdWEyOW1aa0Z3YVMxcGJuUmxjbTVoYkMxclpYaz0K
 
 integration:
   rest:
@@ -19,7 +19,7 @@ integration:
     tinkoff-api-service-url: http://localhost:8082
     user-service:
       url: http://localhost:8080
-      token: bGlzc2EtdHJhZGluZy11c2VyLXNlcnZpY2U=
+      token: ZFhObGNsTmxjblpwWTJVdGFXNTBaWEp1WVd3dGEyVjU=
     analytics-service:
-      token: YW5hbHl0aWNzLWludGVybmFsLWtleQ==
+      token: WVc1aGJIbDBhV056TFdsdWRHVnlibUZzTFd0bGVRCg==
   rabbit:
