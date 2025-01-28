@@ -1,3 +1,5 @@
 spring:
+  application:
+    name: tinkoff-api-service
   profiles:
-    active: local
+    active: prod
