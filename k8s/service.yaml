@@ -7,6 +7,7 @@ spec:
     app: lissa-trading-tinkoff-api-service
   ports:
     - protocol: TCP
-      port: 8082
+      port: 82
       targetPort: 8082
-  type: ClusterIP
+      nodePort: 30082
+  type: NodePort

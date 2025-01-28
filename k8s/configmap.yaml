@@ -10,3 +10,4 @@ data:
   ZIPKIN_URL: "http://103.249.132.74:9411/api/v2/spans"
   IS_SANDBOX_MODE: "true"
   LOGGING_LEVEL_ROOT: "INFO"
+  SWAGGER_PATH: "swagger-ui/tinkoff-api-service"
