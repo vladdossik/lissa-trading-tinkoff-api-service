@@ -16,10 +16,3 @@ security:
 integration:
   rest:
     auth-service-url: http://localhost:8081
-    tinkoff-api-service-url: http://localhost:8082
-    user-service:
-      url: http://localhost:8080
-      token: ZFhObGNsTmxjblpwWTJVdGFXNTBaWEp1WVd3dGEyVjU=
-    analytics-service:
-      token: WVc1aGJIbDBhV056TFdsdWRHVnlibUZzTFd0bGVRCg==
-  rabbit:
