@@ -1,8 +1,8 @@
 server:
   port: ${SERVER_PORT}
 
-api :
-  isSandBoxMode : ${IS_SANDBOX_MODE}
+api:
+  isSandBoxMode: ${IS_SANDBOX_MODE}
   tinkoff-token: ${TINKOFF_TOKEN}
 
 logging:
@@ -16,14 +16,6 @@ security:
 integration:
   rest:
     auth-service-url: ${AUTH_SERVICE_URL}
-    tinkoff-api-service-url: ${TINKOFF_API_SERVICE_URL}
-    user-service:
-      url: ${USER_SERVICE_URL}
-      token: ${USER_SERVICE_TOKEN}
-    analytics-service:
-      token: ${ANALYTICS_SERVICE_TOKEN}
-
-  rabbit:
 
 springdoc:
   swagger-ui:
