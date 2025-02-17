@@ -8,6 +8,7 @@ data:
   TINKOFF_API_SERVICE_URL: "http://lissa-trading-tinkoff-api-service:8082"
   ZIPKIN_URL: "http://103.249.132.74:9411/api/v2/spans"
   AUTH_SERVICE_URL: "http://lissa-trading-auth-service:81"
+  LOKI_URL: "http://loki:3100"
   IS_SANDBOX_MODE: "true"
   LOGGING_LEVEL_ROOT: "INFO"
   SWAGGER_PATH: "swagger-ui/tinkoff-api-service"

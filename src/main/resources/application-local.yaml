@@ -16,21 +16,11 @@ security:
 integration:
   rest:
     auth-service-url: http://localhost:8081
-    tinkoff-api-service-url: http://localhost:8082
-    user-service:
-      url: http://localhost:8080
-      token: ZFhObGNsTmxjblpwWTJVdGFXNTBaWEp1WVd3dGEyVjU=
-    analytics-service:
-      token: WVc1aGJIbDBhV056TFdsdWRHVnlibUZzTFd0bGVRCg==
 
 management:
   tracing:
     sampling:
       probability: 1.0
-  endpoints:
-    web:
-      exposure:
-        exclude: '*'
   zipkin:
     tracing:
       endpoint: http://103.249.132.74:9411/api/v2/spans
